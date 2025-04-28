@@ -27,7 +27,7 @@ int main() {
 
     for (int i = 0; i < numSenders; ++i) {
         std::wstring eventName = L"SenderReadyEvent_" + std::to_wstring(i);
-        hSenderReadyEvents[i] = CreateEvent(NULL, TRUE, FALSE, eventName.c_str());
+        hSenderReadyEvents[i] = CreateEventW(NULL, TRUE, FALSE, eventName.c_str());
         if (hSenderReadyEvents[i] == NULL) {
             std::cerr << "Error creating sender ready event " << i << "!" << std::endl;
             for (int j = 0; j < i; ++j) {
@@ -38,7 +38,7 @@ int main() {
         }
     }
 
-    HANDLE hMessageAvailableEvent = CreateEvent(NULL, FALSE, FALSE, L"MessageAvailableEvent");
+    HANDLE hMessageAvailableEvent = CreateEventW(NULL, FALSE, FALSE, L"MessageAvailableEvent");
     if (hMessageAvailableEvent == NULL) {
         std::cerr << "Error creating message available event!" << std::endl;
         for (int i = 0; i < numSenders; ++i) {
@@ -48,7 +48,7 @@ int main() {
         return 1;
     }
 
-    HANDLE hFileMutex = CreateMutex(NULL, FALSE, L"FileMutex");
+    HANDLE hFileMutex = CreateMutexW(NULL, FALSE, L"FileMutex");
     if (hFileMutex == NULL) {
         std::cerr << "Error creating file mutex!" << std::endl;
         CloseHandle(hMessageAvailableEvent);
@@ -60,10 +60,10 @@ int main() {
     }
 
     for (int i = 0; i < numSenders; ++i) {
-        STARTUPINFO si = { sizeof(si) };
+        STARTUPINFOW si = { sizeof(si) };
         PROCESS_INFORMATION pi;
-        std::wstring commandLine = L"OS_Lab4.Sender.exe " + std::wstring(fileName.begin(), fileName.end()) + L" " + std::to_wstring(i);
-        if (!CreateProcess(NULL, &commandLine[0], NULL, NULL, FALSE, CREATE_NEW_CONSOLE, NULL, NULL, &si, &pi)) {
+        std::wstring commandLine = L"Sender.exe " + std::wstring(fileName.begin(), fileName.end()) + L" " + std::to_wstring(i);
+        if (!CreateProcessW(NULL, &commandLine[0], NULL, NULL, FALSE, CREATE_NEW_CONSOLE, NULL, NULL, &si, &pi)) {
             std::cerr << "Error creating Sender process " << i << "!" << std::endl;
             CloseHandle(hFileMutex);
             CloseHandle(hMessageAvailableEvent);
